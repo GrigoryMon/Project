@@ -12,5 +12,3 @@ storage = MemoryStorage()
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
-
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

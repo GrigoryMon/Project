@@ -32,9 +32,10 @@ class Register(APIView):
         json_data = json.loads(request.body)
         try:
             data = json_data
-            if data.keys()[0] == 'user':
-                Userc.objects.create(**data['user'])
-            elif data.keys()[0] == 'camera':
+            
+            if list(data.keys())[0] == 'user':
+                Userc.objects.create(telegram_id =data['user']['telegram_id'])
+            elif list(data.keys())[0] == 'camera':
                 Camera.objects.create(user = None, **data['camera'])
             return HttpResponse('ok')
         except KeyError:
@@ -46,7 +47,10 @@ class AddCamera(APIView):
         json_data = json.loads(request.body)
         try:
             data = json_data['data']
-            Camera.objects.get(camera_id = data['camera']).update(user = Userc.objects.get(telegram_id = data['telegram_id']))
+            print(data)
+            o = Camera.objects.get(camera_id = data['camera'])
+            o.user = Userc.objects.get(telegram_id = data['user'])
+            o.save()
             return HttpResponse('ok')
         except KeyError:
             return HttpResponseServerError("Malformed data!")

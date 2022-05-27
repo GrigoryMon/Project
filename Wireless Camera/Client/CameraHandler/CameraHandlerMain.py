@@ -8,7 +8,7 @@ import requests, json, base64
 class DeamonCapturing():
     def run(self):
         
-        cap = cv2.VideoCapture('istockphoto-502606353-640_adpp_is.mp4')
+        cap = cv2.VideoCapture(0)
 
         detector = PoseDetector()
         
@@ -16,8 +16,11 @@ class DeamonCapturing():
             _ , img = cap.read()
 
             detector.findPose(img)
-            coords = detector.getPosition(img)
-            detector.notice(coords, img)
+            try:
+                coords = detector.getPosition(img)
+                detector.notice(coords, img)
+            except:
+                print('No human')
             #print(lmlist)
 
             cv2.imshow("Image", img)
@@ -77,23 +80,24 @@ class PoseDetector():
 
     def notice(self, coords, img):
         if self.cnt==0:
-            print(coords)
+            print(coords, self.ls, abs(coords[0]-self.ls[0]), abs(coords[0]-self.ls[0]))
             
             if (abs(coords[0]-self.ls[0]) < 2) and (abs(coords[0]-self.ls[0]) < 2):
                 try:
-                    _, encimg = cv2.imencode(".png ", img)
-                    img_str = encimg.tostring()
-                    img_byte = base64.b64encode(img_str).decode("utf-8")
+                    print(1)
+                    _, encimg = cv2.imencode(".jpg ", img)
+                    
+                    string = base64.b64encode(cv2.imencode('.jpg', img)[1]).decode()
                     url = 'http://127.0.0.1:8000'
                     data = {'data': {
                         'camera': 66546754,
-                        'image': img_byte.encode('utf-8')
+                        'image': string
                     }}
                     r = requests.post(url , json=data)
-                    
+                    print('of')
                 except:
                     print('oops')
-                self.ls = coords
+            self.ls = coords
         if self.cnt<20:
             self.cnt+=1
         if self.cnt==20:

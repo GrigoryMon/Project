@@ -1,6 +1,8 @@
 from aiogram import Bot, executor
 from create import dp,bot
 from handlers import client
+import cv2,base64
+import numpy as np
 import asyncio,aiohttp
 import datetime
 
@@ -14,15 +16,18 @@ async def on_startup(_):
 async def requestdata():
     while True:
 
-        url = 'http://127.0.0.1:8000'
+        url = 'http://127.0.0.1:8000/'
         async with aiohttp.ClientSession() as session:
-            async with session.get('url') as response:
+            async with session.get(url) as response:
 
-                data = await response.json()['content']
-                img = data[0]['image'].
-                await client.send_notice(data, img)
+                d = await response.json()
+                data =d['content']
+                if data:
+                    
+                    await client.send_notice(data)
+                    
                 
-        await asyncio.sleep(120)
+        await asyncio.sleep(60)
 
 client.register_handlers_client(dp)
 #admin.register_handlers_admin(dp)
