@@ -6,7 +6,7 @@ class Userc(models.Model):
 
 class Camera(models.Model):
     camera_id = models.IntegerField('Camera')
-    user = models.ForeignKey(Userc, models.SET_NULL, null=True, verbose_name='User')
+    user = models.ManyToManyField(Userc, verbose_name='Users')
 
 class Images(models.Model):
     image=models.TextField('Image')
